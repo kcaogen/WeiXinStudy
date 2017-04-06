@@ -52,6 +52,6 @@ public class AccessTokenUtil {
 	}
 	
 	public static void main(String[] args) {
-		getAccessToken();
+		System.out.println(getAccessToken());
 	}
 }

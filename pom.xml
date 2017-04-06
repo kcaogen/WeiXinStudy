@@ -58,6 +58,18 @@
 			<version>2.9.0</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.apache.directory.studio</groupId>
+		    <artifactId>org.dom4j.dom4j</artifactId>
+		    <version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>com.thoughtworks.xstream</groupId>
+		    <artifactId>xstream</artifactId>
+		    <version>1.4.8</version>
+		</dependency>
+		
   </dependencies>
   
   <build>
