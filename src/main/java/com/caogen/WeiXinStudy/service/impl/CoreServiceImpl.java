@@ -9,6 +9,7 @@ import com.caogen.WeiXinStudy.entity.ImageMessage;
 import com.caogen.WeiXinStudy.entity.TextMessage;
 import com.caogen.WeiXinStudy.service.CoreService;
 import com.caogen.WeiXinStudy.util.MessageUtil;
+import com.caogen.WeiXinStudy.util.TemplateMessageUtil;
 
 @Service
 public class CoreServiceImpl implements CoreService {
@@ -87,6 +88,9 @@ public class CoreServiceImpl implements CoreService {
 			textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
 			textMessage.setContent("订阅草根公众号成功！"); 
 			reMessage = MessageUtil.textMessageToXml(textMessage);
+			
+			//发送消息模板
+			TemplateMessageUtil.ConcernedSuccess(openid);
 			break;
 		case MessageUtil.EVENT_TYPE_UNSUBSCRIBE:
 			//取消订阅

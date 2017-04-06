@@ -56,7 +56,7 @@ public class UserUtil {
 			
 			for(int i= 0; i < size; i++){
 				User user = getUserInfo(openIdList.get(i));
-				System.err.println(JSONObject.toJSONString(user));
+				System.err.println(user.getNickname() + ":" + JSONObject.toJSONString(user));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
