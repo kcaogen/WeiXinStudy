@@ -19,8 +19,9 @@ public class AccessTokenUtil {
 	 * @param appID		微信公众号凭证
 	 * @param appScret	微信公众号凭证秘钥
 	 * @return
+	 * @throws Exception 
 	 */
-	public static String getAccessToken() {
+	public static String getAccessToken() throws Exception {
 		Jedis jedis = RedisPool.getJedis();
 		String access_token = jedis.get(ACCESSTOKEN);
 		if(!StringUtils.isEmpty(access_token)){
@@ -31,7 +32,7 @@ public class AccessTokenUtil {
 		// 访问微信服务器
 		String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appID + "&secret="
 				+ appsecret;
-		String message = HttpUtil.getMessage(url);
+		String message = HttpUtil.sendGet(url);
 		
 		if(StringUtils.isEmpty(message)){
 			return null;
@@ -52,6 +53,11 @@ public class AccessTokenUtil {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(getAccessToken());
+		try {
+			System.out.println(getAccessToken());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
