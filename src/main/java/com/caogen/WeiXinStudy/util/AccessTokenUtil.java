@@ -45,7 +45,12 @@ public class AccessTokenUtil {
 			return null;
 		}
 		access_token = json.get(ACCESSTOKEN).toString();
-		jedis.setex(ACCESSTOKEN, Integer.parseInt(json.get("expires_in").toString()), access_token);
+		
+		/**
+		 * access_token的有效期目前为2个小时，需定时刷新，重复获取将导致上次获取的access_token失效。
+		 * 虽然有效期是两个小时，但是缓存有效时间还是少于两个小时更好点，以防网络延迟等事故
+		 */
+		jedis.setex(ACCESSTOKEN, Integer.parseInt(json.get("expires_in").toString())-100, access_token);
 		
 		RedisPool.close(jedis);
 		
