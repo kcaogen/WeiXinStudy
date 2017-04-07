@@ -37,7 +37,7 @@ public class CustomerServiceUtil {
 		content.put("content", "你好啊，逗比！");
 
 		HashMap<String, Object> map = new HashMap<>();
-		map.put("touser", "obh5Ow1LonJtjUvsHt2Ah7gsYrS4");
+		map.put("touser", "obh5OwxMu3wnQX3goFKpRgd0Gac8");
 		map.put("msgtype", "text");
 		map.put("text", content);
 		String messageJson = JSONObject.toJSONString(map);
