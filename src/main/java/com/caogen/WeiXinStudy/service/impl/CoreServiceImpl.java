@@ -83,17 +83,10 @@ public class CoreServiceImpl implements CoreService {
 
 		String openid = map.get("FromUserName"); // 用户 openid
 		String mpid = map.get("ToUserName"); // 公众号原始 ID
-		TextMessage textMessage = new TextMessage();
+		
 		switch (Event) {
 		case MessageUtil.EVENT_TYPE_SUBSCRIBE:
 			
-			textMessage.setToUserName(openid);
-			textMessage.setFromUserName(mpid);
-			textMessage.setCreateTime(new Date().getTime());
-			textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
-			textMessage.setContent("订阅草根公众号成功！");
-			reMessage = MessageUtil.textMessageToXml(textMessage);
-
 			// 发送消息模板
 			TemplateMessageUtil.ConcernedSuccess(openid);
 			break;
@@ -120,6 +113,7 @@ public class CoreServiceImpl implements CoreService {
 			 * 根据key的通过发送不同的消息
 			 */
 			String EventKey = map.get("EventKey");
+			TextMessage textMessage = new TextMessage();
 			if(EventKey.equals("V1001_TODAY_MUSIC")){
 				textMessage.setToUserName(openid);
 				textMessage.setFromUserName(mpid);
