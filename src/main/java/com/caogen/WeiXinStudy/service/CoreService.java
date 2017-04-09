@@ -16,6 +16,6 @@ public interface CoreService {
 	 * 
 	 * @param map
 	 */
-	public String EventDispatcher(Map<String, String> map);
+	public String EventDispatcher(Map<String, String> map) throws Exception;
 
 }

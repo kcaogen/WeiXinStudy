@@ -6,8 +6,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.caogen.WeiXinStudy.entity.ImageMessage;
+import com.caogen.WeiXinStudy.entity.ReportLocation;
 import com.caogen.WeiXinStudy.entity.TextMessage;
 import com.caogen.WeiXinStudy.service.CoreService;
+import com.caogen.WeiXinStudy.util.BaiDuUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
 import com.caogen.WeiXinStudy.util.TemplateMessageUtil;
 
@@ -34,17 +36,17 @@ public class CoreServiceImpl implements CoreService {
 			textMessage.setFromUserName(mpid);
 			textMessage.setCreateTime(new Date().getTime());
 			textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
-			textMessage.setContent("你好，我是草根！");
+			textMessage.setContent(map.get("Content"));
 			reMessage = MessageUtil.textMessageToXml(textMessage);
 			break;
 		case MessageUtil.REQ_MESSAGE_TYPE_IMAGE:
-			ImageMessage imageMessage = new ImageMessage();
-			imageMessage.setToUserName(openid);
-			imageMessage.setFromUserName(mpid);
-			imageMessage.setCreateTime(new Date().getTime());
-			imageMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_IMAGE);
-			imageMessage.setPicUrl("http://kcaogen.ngrok.cc/image/lyf.jpg");
-			reMessage = MessageUtil.imageMessageToXml(imageMessage);
+			reMessage = "<xml>"+
+						"<ToUserName><![CDATA["+openid+"]]></ToUserName>" +
+						"<FromUserName><![CDATA["+mpid+"]]></FromUserName>" +
+						"<CreateTime>"+new Date().getTime()+"</CreateTime>" +
+						"<MsgType><![CDATA[image]]></MsgType>" +
+						"<Image><MediaId><![CDATA[GjqnHKOGrkbKj9FE2RSlkyM5XdMjP0qWv0ZtU3bBhiY]]></MediaId></Image>" + 
+						"</xml>";
 			break;
 		case MessageUtil.REQ_MESSAGE_TYPE_VOICE:
 			reMessage = "语音消息";
@@ -72,9 +74,10 @@ public class CoreServiceImpl implements CoreService {
 	 * 事件消息业务分发器
 	 * 
 	 * @param Event
+	 * @throws Exception 
 	 */
 	@Override
-	public String EventDispatcher(Map<String, String> map) {
+	public String EventDispatcher(Map<String, String> map) throws Exception {
 		String reMessage = "";
 		String Event = map.get("Event");
 
@@ -96,6 +99,20 @@ public class CoreServiceImpl implements CoreService {
 			break;
 		case MessageUtil.EVENT_TYPE_UNSUBSCRIBE:
 			// 取消订阅
+			break;
+			
+		case MessageUtil.EVENT_TYPE_LOCATION:
+			//上报地理位置
+			ReportLocation location = new ReportLocation();
+			location.setFromUserName(openid);
+			location.setLatitude(map.get("Latitude"));
+			location.setLongitude(map.get("Longitude"));
+			location.setPrecision(map.get("Precision"));
+			
+			location = BaiDuUtil.getBaiDuCoordinate(location);
+			location = BaiDuUtil.getBaiDuAddress(location);
+			//发送地理位置消息模板
+			TemplateMessageUtil.ConcernedLocation(location);
 			break;
 		default:
 			break;

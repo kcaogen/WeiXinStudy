@@ -80,6 +80,11 @@ public class MessageUtil {
 	 * 事件类型：unsubscribe(取消订阅)
 	 */
 	public static final String EVENT_TYPE_UNSUBSCRIBE = "unsubscribe";
+	
+	/**
+	 * 事件类型：LOCATION(上报地理位置事件)
+	 */
+	public static final String EVENT_TYPE_LOCATION = "LOCATION";
 
 	/**
 	 * @Description: 解析微信发来的请求（XML）

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import com.alibaba.fastjson.JSONObject;
+import com.caogen.WeiXinStudy.entity.ReportLocation;
 
 /**
  * 模板消息接口
@@ -59,6 +60,46 @@ public class TemplateMessageUtil {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("touser", openId);
 		map.put("template_id", "xJDLg_VojFK9pzFowVy7eRu4jTTEjb01oR8OFp0s48k");
+		map.put("url", "http://kcaogen.ngrok.cc/image/lyf.jpg");
+		map.put("data", data);
+		String messageJson = JSONObject.toJSONString(map);
+
+		System.out.println(messageJson);
+		try {
+			sendTemplateMessage(messageJson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 地理位置消息模板
+	 * 
+	 * @param openId
+	 */
+	public static void ConcernedLocation(ReportLocation location) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		
+		HashMap<String, String> time = new HashMap<>();
+		time.put("value", df.format(new Date()));
+		time.put("color", "#173177");
+
+		HashMap<String, String> address = new HashMap<>();
+		address.put("value", location.getFormatted_address());
+		address.put("color", "#173177");
+
+		HashMap<String, String> description = new HashMap<>();
+		description.put("value", location.getSematic_description());
+		description.put("color", "#173177");
+
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("time", time);
+		data.put("address", address);
+		data.put("description", description);
+
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("touser", location.getFromUserName());
+		map.put("template_id", "brM6WpQZ-rgXIHsftUPbUiHZcmiEwGxD8UUhDH9D0AQ");
 		map.put("url", "http://kcaogen.ngrok.cc/image/lyf.jpg");
 		map.put("data", data);
 		String messageJson = JSONObject.toJSONString(map);
