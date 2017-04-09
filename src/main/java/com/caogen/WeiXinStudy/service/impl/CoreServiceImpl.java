@@ -83,10 +83,10 @@ public class CoreServiceImpl implements CoreService {
 
 		String openid = map.get("FromUserName"); // 用户 openid
 		String mpid = map.get("ToUserName"); // 公众号原始 ID
-
+		TextMessage textMessage = new TextMessage();
 		switch (Event) {
 		case MessageUtil.EVENT_TYPE_SUBSCRIBE:
-			TextMessage textMessage = new TextMessage();
+			
 			textMessage.setToUserName(openid);
 			textMessage.setFromUserName(mpid);
 			textMessage.setCreateTime(new Date().getTime());
@@ -113,6 +113,28 @@ public class CoreServiceImpl implements CoreService {
 			location = BaiDuUtil.getBaiDuAddress(location);
 			//发送地理位置消息模板
 			TemplateMessageUtil.ConcernedLocation(location);
+			break;
+		case MessageUtil.EVENT_TYPE_CLICK:
+			/**
+			 * 点击菜单拉取消息时的事件推送
+			 * 根据key的通过发送不同的消息
+			 */
+			String EventKey = map.get("EventKey");
+			if(EventKey.equals("V1001_TODAY_MUSIC")){
+				textMessage.setToUserName(openid);
+				textMessage.setFromUserName(mpid);
+				textMessage.setCreateTime(new Date().getTime());
+				textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
+				textMessage.setContent("你是不是想听我唱歌！");
+				reMessage = MessageUtil.textMessageToXml(textMessage);
+			}else if(EventKey.equals("V1001_GOOD")){
+				textMessage.setToUserName(openid);
+				textMessage.setFromUserName(mpid);
+				textMessage.setCreateTime(new Date().getTime());
+				textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
+				textMessage.setContent("谢谢您的赞！");
+				reMessage = MessageUtil.textMessageToXml(textMessage);
+			}
 			break;
 		default:
 			break;

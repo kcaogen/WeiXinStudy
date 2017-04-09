@@ -85,6 +85,11 @@ public class MessageUtil {
 	 * 事件类型：LOCATION(上报地理位置事件)
 	 */
 	public static final String EVENT_TYPE_LOCATION = "LOCATION";
+	
+	/**
+	 * 点击菜单拉取消息时的事件推送
+	 */
+	public static final String EVENT_TYPE_CLICK = "CLICK";
 
 	/**
 	 * @Description: 解析微信发来的请求（XML）
