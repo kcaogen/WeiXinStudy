@@ -41,12 +41,12 @@ public class CoreServiceImpl implements CoreService {
 			break;
 		case MessageUtil.REQ_MESSAGE_TYPE_IMAGE:
 			reMessage = "<xml>"+
-						"<ToUserName><![CDATA["+openid+"]]></ToUserName>" +
-						"<FromUserName><![CDATA["+mpid+"]]></FromUserName>" +
-						"<CreateTime>"+new Date().getTime()+"</CreateTime>" +
-						"<MsgType><![CDATA[image]]></MsgType>" +
-						"<Image><MediaId><![CDATA[GjqnHKOGrkbKj9FE2RSlkyM5XdMjP0qWv0ZtU3bBhiY]]></MediaId></Image>" + 
-						"</xml>";
+			"<ToUserName><![CDATA["+openid+"]]></ToUserName>" +
+			"<FromUserName><![CDATA["+mpid+"]]></FromUserName>" +
+			"<CreateTime>"+new Date().getTime()+"</CreateTime>" +
+			"<MsgType><![CDATA[image]]></MsgType>" +
+			"<Image><MediaId><![CDATA[GjqnHKOGrkbKj9FE2RSlkyM5XdMjP0qWv0ZtU3bBhiY]]></MediaId></Image>" + 
+			"</xml>";
 			break;
 		case MessageUtil.REQ_MESSAGE_TYPE_VOICE:
 			reMessage = "语音消息";
@@ -86,14 +86,12 @@ public class CoreServiceImpl implements CoreService {
 		
 		switch (Event) {
 		case MessageUtil.EVENT_TYPE_SUBSCRIBE:
-			
 			// 发送消息模板
 			TemplateMessageUtil.ConcernedSuccess(openid);
 			break;
 		case MessageUtil.EVENT_TYPE_UNSUBSCRIBE:
 			// 取消订阅
 			break;
-			
 		case MessageUtil.EVENT_TYPE_LOCATION:
 			//上报地理位置
 			ReportLocation location = new ReportLocation();
