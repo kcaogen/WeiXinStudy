@@ -128,6 +128,20 @@ public class CoreServiceImpl implements CoreService {
 				reMessage = MessageUtil.textMessageToXml(textMessage);
 			}
 			break;
+		case MessageUtil.EVENT_TYPE_SCAN:
+			/**
+			 * 扫描二维码的事件推送
+			 * 根据key的通过发送不同的消息
+			 */
+			String EventKeyBySCAN = map.get("EventKey");
+			TextMessage textMessageBySCAN = new TextMessage();
+			textMessageBySCAN.setToUserName(openid);
+			textMessageBySCAN.setFromUserName(mpid);
+			textMessageBySCAN.setCreateTime(new Date().getTime());
+			textMessageBySCAN.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
+			textMessageBySCAN.setContent("二维码推送！"+EventKeyBySCAN);
+			reMessage = MessageUtil.textMessageToXml(textMessageBySCAN);
+			break;
 		default:
 			break;
 		}
