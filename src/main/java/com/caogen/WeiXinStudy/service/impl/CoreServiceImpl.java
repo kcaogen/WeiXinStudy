@@ -11,7 +11,10 @@ import com.caogen.WeiXinStudy.entity.TextMessage;
 import com.caogen.WeiXinStudy.service.CoreService;
 import com.caogen.WeiXinStudy.util.BaiDuUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
+import com.caogen.WeiXinStudy.util.RedisPool;
 import com.caogen.WeiXinStudy.util.TemplateMessageUtil;
+
+import redis.clients.jedis.Jedis;
 
 @Service
 public class CoreServiceImpl implements CoreService {
@@ -112,13 +115,15 @@ public class CoreServiceImpl implements CoreService {
 			 */
 			String EventKey = map.get("EventKey");
 			TextMessage textMessage = new TextMessage();
-			if(EventKey.equals("V1001_TODAY_MUSIC")){
+			if(EventKey.equals("V1001_TODAY_JOKE")){
+				Jedis jedis = RedisPool.getJedis();
 				textMessage.setToUserName(openid);
 				textMessage.setFromUserName(mpid);
 				textMessage.setCreateTime(new Date().getTime());
 				textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
-				textMessage.setContent("你是不是想听我唱歌！");
+				textMessage.setContent(jedis.srandmember("joke"));
 				reMessage = MessageUtil.textMessageToXml(textMessage);
+				RedisPool.close(jedis);
 			}else if(EventKey.equals("V1001_GOOD")){
 				textMessage.setToUserName(openid);
 				textMessage.setFromUserName(mpid);

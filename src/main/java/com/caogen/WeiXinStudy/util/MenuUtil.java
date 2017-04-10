@@ -52,8 +52,8 @@ public class MenuUtil {
 		
 		HashMap<String, String> buttonMap = new HashMap<>();
 		buttonMap.put("type", "click");
-		buttonMap.put("name", "今日歌曲");
-		buttonMap.put("key", "V1001_TODAY_MUSIC");
+		buttonMap.put("name", "今日笑话");
+		buttonMap.put("key", "V1001_TODAY_JOKE");
 		
 		List<Object> buttonList = new ArrayList<>();
 		buttonList.add(buttonMap);
