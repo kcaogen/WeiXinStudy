@@ -121,7 +121,7 @@ public class CoreServiceImpl implements CoreService {
 				textMessage.setFromUserName(mpid);
 				textMessage.setCreateTime(new Date().getTime());
 				textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
-				textMessage.setContent(jedis.srandmember("joke"));
+				textMessage.setContent(jedis.srandmember("joke")==null?"":jedis.srandmember("joke"));
 				reMessage = MessageUtil.textMessageToXml(textMessage);
 				RedisPool.close(jedis);
 			}else if(EventKey.equals("V1001_GOOD")){
