@@ -1,5 +1,7 @@
 package com.caogen.WeiXinStudy.util;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * 图灵机器人
  * @author 草根
@@ -18,7 +20,8 @@ public class TuringRobots {
 	public static String dialogue(String info) throws Exception{
 		String url = "http://www.tuling123.com/openapi/api?key="+APIkey+"&info="+info;
 		String message = HttpUtil.sendGet(url);
-		return message;
+		JSONObject json = JSONObject.parseObject(message);
+		return json.get("text").toString();
 	}
 
 	public static void main(String[] args) {

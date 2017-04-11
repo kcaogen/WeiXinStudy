@@ -9,7 +9,7 @@ public interface CoreService {
 	 * 
 	 * @param map
 	 */
-	public String processMessage(Map<String, String> map);
+	public String processMessage(Map<String, String> map) throws Exception;
 
 	/**
 	 * 事件消息业务分发器

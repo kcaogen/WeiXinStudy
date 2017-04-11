@@ -13,6 +13,7 @@ import com.caogen.WeiXinStudy.util.BaiDuUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
 import com.caogen.WeiXinStudy.util.RedisPool;
 import com.caogen.WeiXinStudy.util.TemplateMessageUtil;
+import com.caogen.WeiXinStudy.util.TuringRobots;
 
 import redis.clients.jedis.Jedis;
 
@@ -23,9 +24,10 @@ public class CoreServiceImpl implements CoreService {
 	 * 消息业务处理分发器
 	 * 
 	 * @param MsgType
+	 * @throws Exception 
 	 */
 	@Override
-	public String processMessage(Map<String, String> map) {
+	public String processMessage(Map<String, String> map) throws Exception {
 		String reMessage = "";
 		String MsgType = map.get("MsgType");
 
@@ -39,7 +41,7 @@ public class CoreServiceImpl implements CoreService {
 			textMessage.setFromUserName(mpid);
 			textMessage.setCreateTime(new Date().getTime());
 			textMessage.setMsgType(MessageUtil.REQ_MESSAGE_TYPE_TEXT);
-			textMessage.setContent(map.get("Content"));
+			textMessage.setContent(TuringRobots.dialogue(map.get("Content").toString()));
 			reMessage = MessageUtil.textMessageToXml(textMessage);
 			break;
 		case MessageUtil.REQ_MESSAGE_TYPE_IMAGE:
