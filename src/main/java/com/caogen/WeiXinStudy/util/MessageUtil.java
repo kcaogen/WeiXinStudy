@@ -95,6 +95,11 @@ public class MessageUtil {
 	 * 用户已关注时的事件推送
 	 */
 	public static final String EVENT_TYPE_SCAN = "SCAN";
+	
+	/**
+	 * 点击菜单跳转链接时的事件推送
+	 */
+	public static final String EVENT_TYPE_VIEW = "VIEW";
 
 	/**
 	 * @Description: 解析微信发来的请求（XML）
