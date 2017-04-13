@@ -8,21 +8,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.alibaba.fastjson.JSONObject;
 import com.caogen.WeiXinStudy.entity.User;
 import com.caogen.WeiXinStudy.service.CoreService;
 import com.caogen.WeiXinStudy.util.AccessTokenUtil;
-import com.caogen.WeiXinStudy.util.CookieUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
 import com.caogen.WeiXinStudy.util.SignUtil;
 import com.caogen.WeiXinStudy.util.UserUtil;
 
 @Controller
+@Scope("prototype")
 @RequestMapping("/weixin")
 public class WeiXinController {
 
@@ -103,17 +103,17 @@ public class WeiXinController {
 	 * @return
 	 */
 	@RequestMapping(value = "/userCode")
-	public String getUserCode(HttpServletRequest request, HttpServletResponse response){
+	public String getUserCode(HttpServletRequest request){
 		try {
-			boolean flag = AccessTokenUtil.getPageAccessToken(request, response);
+			boolean flag = AccessTokenUtil.getPageAccessToken(request);
 			if(flag){
-				return "redirect:/userInfo";
+				return "forward:/weixin/userInfo";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return "";
+		return null;
 	}
 	
 	/**
@@ -123,15 +123,18 @@ public class WeiXinController {
 	 * @return
 	 */
 	@RequestMapping(value = "/userInfo")
-	public String getUserInfo(HttpServletRequest request, HttpServletResponse response){
+	public String getUserInfo(HttpServletRequest request){
 		try {
-			//先从cookie获取access_token和openid
-			String access_token = CookieUtil.getCookieValue(request, "access_token");
-			String openid = CookieUtil.getCookieValue(request, "openid");
+			//先从session获取access_token和openid
+			String access_token = request.getSession().getAttribute("access_token")==null?"":
+				request.getSession().getAttribute("access_token").toString();
+			String openid = request.getSession().getAttribute("openid")==null?"":
+				request.getSession().getAttribute("openid").toString();
 			
 			if(StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid))return "userCode";
 			
-			User user = UserUtil.getUserInfo(access_token, openid);
+			User user = UserUtil.getUserInfo(request, access_token, openid);
+			if(user == null)return "userCode";
 			request.setAttribute("user", user);
 			
 		} catch (Exception e) {

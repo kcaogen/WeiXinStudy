@@ -10,14 +10,13 @@ import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.caogen.WeiXinStudy.entity.PublicAccount;
 
 import redis.clients.jedis.Jedis;
 
 public class AccessTokenUtil {
 	private static Logger logger = Logger.getLogger(AccessTokenUtil.class); 
 	
-	private static final String appID = "wx937206e19c47a753";
-	private static final String appsecret = "a75356424d2167b7e2f8f7a21b907c0c";
 	private static final String ACCESSTOKEN = "access_token";
 	
 	/**
@@ -50,8 +49,8 @@ public class AccessTokenUtil {
 	        }
 			
 			// 访问微信服务器
-			String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appID + "&secret="
-					+ appsecret;
+			String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + PublicAccount.getAppid() + "&secret="
+					+ PublicAccount.getAppsecret();
 			String message = HttpUtil.sendGet(url);
 			
 			if(StringUtils.isEmpty(message)){
@@ -84,9 +83,9 @@ public class AccessTokenUtil {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static boolean getPageAccessToken(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	public static boolean getPageAccessToken(HttpServletRequest request) throws Exception{
 		String code = request.getParameter("code");
-		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appsecret+"&code="+code+"&grant_type=authorization_code";
+		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+PublicAccount.getAppid()+"&secret="+PublicAccount.getAppsecret()+"&code="+code+"&grant_type=authorization_code";
 		String message = HttpUtil.sendGet(url);
 		
 		if(StringUtils.isEmpty(message)){
@@ -105,12 +104,11 @@ public class AccessTokenUtil {
 		refresh_token = json.getString("refresh_token");
 		openid = json.getString("openid");
 		unionid = json.getString("unionid");
-		int time = 60 * 60 * 24 * 30;
-		CookieUtil.addCookie(response, "access_token", 
-				access_token, Integer.parseInt(json.get("expires_in").toString())-100);
-		CookieUtil.addCookie(response, "refresh_token", refresh_token, time);
-		CookieUtil.addCookie(response, "openid", openid, time);
-		CookieUtil.addCookie(response, "unionid", unionid, time);
+		
+		request.getSession().setAttribute("access_token", access_token);
+		request.getSession().setAttribute("refresh_token", refresh_token);
+		request.getSession().setAttribute("openid", openid);
+		request.getSession().setAttribute("unionid", unionid);
 		
 		return true;
 	}

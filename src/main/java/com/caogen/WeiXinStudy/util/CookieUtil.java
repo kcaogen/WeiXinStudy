@@ -31,7 +31,7 @@ public class CookieUtil {
 	
 	public static void addDomainCookie(HttpServletResponse response, String name, String value, int age) {
 		Cookie cookies = new Cookie(name, value);
-		cookies.setDomain("kcaogen.com"); 
+		cookies.setDomain("kcaogen.ngrok.cc"); 
 		cookies.setPath("/");
 		cookies.setMaxAge(age);
 		response.addCookie(cookies);
