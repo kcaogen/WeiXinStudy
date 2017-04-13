@@ -9,12 +9,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.alibaba.fastjson.JSONObject;
+import com.caogen.WeiXinStudy.entity.User;
 import com.caogen.WeiXinStudy.service.CoreService;
+import com.caogen.WeiXinStudy.util.AccessTokenUtil;
+import com.caogen.WeiXinStudy.util.CookieUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
 import com.caogen.WeiXinStudy.util.SignUtil;
+import com.caogen.WeiXinStudy.util.UserUtil;
 
 @Controller
 @RequestMapping("/weixin")
@@ -88,5 +94,37 @@ public class WeiXinController {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@RequestMapping(value = "/userInfo")
+	public String getUserCode(HttpServletRequest request, HttpServletResponse response){
+		try {
+			//先从cookie获取access_token和openid
+			String access_token = CookieUtil.getCookieValue(request, "access_token");
+			String openid = CookieUtil.getCookieValue(request, "openid");
+			
+			if(!StringUtils.isEmpty(access_token) && !StringUtils.isEmpty(openid)){
+				User user = UserUtil.getUserInfo(access_token, openid);
+				request.setAttribute("user", user);
+				return "userInfo";
+			}
+			
+			boolean flag = AccessTokenUtil.getPageAccessToken(request, response);
+			if(flag){
+				access_token = CookieUtil.getCookieValue(request, "access_token");
+				openid = CookieUtil.getCookieValue(request, "openid");
+			}
+			
+			if(!StringUtils.isEmpty(access_token) && !StringUtils.isEmpty(openid)){
+				User user = UserUtil.getUserInfo(access_token, openid);
+				request.setAttribute("user", user);
+				return "userInfo";
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "userInfo";
 	}
 }

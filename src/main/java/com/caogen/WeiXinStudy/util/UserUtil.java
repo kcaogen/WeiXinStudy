@@ -51,6 +51,23 @@ public class UserUtil {
 
 		return user;
 	}
+	
+	/**
+	 * 通过网页授权的access_token获取用户信息
+	 * @param access_token
+	 * @param openid
+	 * @return
+	 * @throws Exception 
+	 */
+	public static User getUserInfo(String access_token, String openid) throws Exception{
+		String url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid
+				+ "&lang=zh_CN";
+		String message = HttpUtil.sendGet(url);
+
+		User user = JSON.parseObject(message, User.class);
+
+		return user;
+	}
 
 	public static void main(String[] args) {
 		try {

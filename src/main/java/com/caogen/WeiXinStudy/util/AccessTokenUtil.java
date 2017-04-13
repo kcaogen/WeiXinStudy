@@ -3,6 +3,9 @@ package com.caogen.WeiXinStudy.util;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
@@ -74,6 +77,42 @@ public class AccessTokenUtil {
 		RedisPool.close(jedis);
 		
 		return access_token;
+	}
+	
+	/**
+	 * 获取网页授权的access_token
+	 * @return
+	 * @throws Exception 
+	 */
+	public static boolean getPageAccessToken(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String code = request.getParameter("code");
+		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appID+"&secret="+appsecret+"&code="+code+"&grant_type=authorization_code";
+		String message = HttpUtil.sendGet(url);
+		
+		if(StringUtils.isEmpty(message)){
+			return false;
+		}
+		
+		JSONObject json = JSONObject.parseObject(message);
+
+		if(json.get("errcode") != null){
+			logger.info("获取网页access_token返回错误码:" + json.get("errcode").toString());
+			return false;
+		}
+		
+		String access_token, refresh_token, openid, unionid;
+		access_token = json.getString("access_token");
+		refresh_token = json.getString("refresh_token");
+		openid = json.getString("openid");
+		unionid = json.getString("unionid");
+		int time = 60 * 60 * 24 * 30;
+		CookieUtil.addCookie(response, "access_token", 
+				access_token, Integer.parseInt(json.get("expires_in").toString())-100);
+		CookieUtil.addCookie(response, "refresh_token", refresh_token, time);
+		CookieUtil.addCookie(response, "openid", openid, time);
+		CookieUtil.addCookie(response, "unionid", unionid, time);
+		
+		return true;
 	}
 	
 	public static void main(String[] args) {

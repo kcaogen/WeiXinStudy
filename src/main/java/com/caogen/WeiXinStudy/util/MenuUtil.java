@@ -1,5 +1,6 @@
 package com.caogen.WeiXinStudy.util;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +32,12 @@ public class MenuUtil {
 		map1.put("name", "赞一下我");
 		map1.put("key", "V1001_GOOD");
 		
+		String redirect_uri = "http://kcaogen.ngrok.cc/weixin/userInfo";
+		redirect_uri = URLEncoder.encode(redirect_uri);
 		HashMap<String, String> map2 = new HashMap<>();
 		map2.put("type", "view");
-		map2.put("name", "视频");
-		map2.put("url", "http://v.qq.com/");
+		map2.put("name", "用户授权");
+		map2.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx937206e19c47a753&redirect_uri="+redirect_uri+"&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
 		
 		HashMap<String, String> map3 = new HashMap<>();
 		map3.put("type", "view");
