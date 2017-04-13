@@ -96,30 +96,43 @@ public class WeiXinController {
 
 	}
 	
-	@RequestMapping(value = "/userInfo")
+	/**
+	 * 获取用户授权code
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/userCode")
 	public String getUserCode(HttpServletRequest request, HttpServletResponse response){
+		try {
+			boolean flag = AccessTokenUtil.getPageAccessToken(request, response);
+			if(flag){
+				return "redirect:/userInfo";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "";
+	}
+	
+	/**
+	 * 通过网页授权获取用户信息
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/userInfo")
+	public String getUserInfo(HttpServletRequest request, HttpServletResponse response){
 		try {
 			//先从cookie获取access_token和openid
 			String access_token = CookieUtil.getCookieValue(request, "access_token");
 			String openid = CookieUtil.getCookieValue(request, "openid");
 			
-			if(!StringUtils.isEmpty(access_token) && !StringUtils.isEmpty(openid)){
-				User user = UserUtil.getUserInfo(access_token, openid);
-				request.setAttribute("user", user);
-				return "userInfo";
-			}
+			if(StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid))return "userCode";
 			
-			boolean flag = AccessTokenUtil.getPageAccessToken(request, response);
-			if(flag){
-				access_token = CookieUtil.getCookieValue(request, "access_token");
-				openid = CookieUtil.getCookieValue(request, "openid");
-			}
-			
-			if(!StringUtils.isEmpty(access_token) && !StringUtils.isEmpty(openid)){
-				User user = UserUtil.getUserInfo(access_token, openid);
-				request.setAttribute("user", user);
-				return "userInfo";
-			}
+			User user = UserUtil.getUserInfo(access_token, openid);
+			request.setAttribute("user", user);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
