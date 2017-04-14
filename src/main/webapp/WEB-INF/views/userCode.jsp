@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>用户code</title>
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script>
    var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx937206e19c47a753&redirect_uri=http%3a%2f%2fx1698s3226.51mypc.cn%2fweixin%2fuserCode&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";

@@ -38,6 +38,22 @@
           <em class="weui-form-preview__value">${user.nickname }</em>
         </div>
       </div>
+      <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+          <label class="weui-form-preview__label">性别</label>
+          <em class="weui-form-preview__value">
+          <c:if test="${user.sex == 0}">未知</c:if>
+          <c:if test="${user.sex == 1}">男性</c:if>
+          <c:if test="${user.sex == 2}">女性</c:if>
+          </em>
+        </div>
+      </div>
+      <div class="weui-form-preview__hd">
+        <div class="weui-form-preview__item">
+          <label class="weui-form-preview__label">城市</label>
+          <em class="weui-form-preview__value">${user.city }</em>
+        </div>
+      </div>
     </div>
 
     <script src="../lib/jquery-2.1.4.js"></script>
