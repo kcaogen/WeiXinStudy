@@ -34,7 +34,7 @@ public class MenuUtil {
 		HashMap<String, String> map2 = new HashMap<>();
 		map2.put("type", "view");
 		map2.put("name", "用户信息");
-		map2.put("url", "http://kcaogen.online/weixin/userInfo");
+		map2.put("url", "http://x1698s3226.51mypc.cn/weixin/userInfo");
 		
 		HashMap<String, String> map3 = new HashMap<>();
 		map3.put("type", "view");
