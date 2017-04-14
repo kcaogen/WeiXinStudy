@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 <script type="text/javascript" src="/js/jquery.js"></script>
 <script>
-   var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx937206e19c47a753&redirect_uri=http%3a%2f%2fkcaogen.ngrok.cc%2fweixin%2fuserCode&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+   var url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx937206e19c47a753&redirect_uri=http%3a%2f%2fkcaogen.online%2fweixin%2fuserCode&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
    window.location.href = url;
 </script>
 </head>
