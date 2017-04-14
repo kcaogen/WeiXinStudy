@@ -83,7 +83,7 @@ public class AccessTokenUtil {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static boolean getPageAccessToken(HttpServletRequest request) throws Exception{
+	public static boolean getPageAccessToken(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String code = request.getParameter("code");
 		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+PublicAccount.getAppid()+"&secret="+PublicAccount.getAppsecret()+"&code="+code+"&grant_type=authorization_code";
 		String message = HttpUtil.sendGet(url);
@@ -99,16 +99,12 @@ public class AccessTokenUtil {
 			return false;
 		}
 		
-		String access_token, refresh_token, openid, unionid;
-		access_token = json.getString("access_token");
-		refresh_token = json.getString("refresh_token");
-		openid = json.getString("openid");
-		unionid = json.getString("unionid");
+		String openid = json.getString("openid");
+		Jedis jedis = RedisPool.getJedis();
+		jedis.set(openid, json.toString());
+		RedisPool.close(jedis);
 		
-		request.getSession().setAttribute("access_token", access_token);
-		request.getSession().setAttribute("refresh_token", refresh_token);
-		request.getSession().setAttribute("openid", openid);
-		request.getSession().setAttribute("unionid", unionid);
+		CookieUtil.addCookie(response, "openid", openid, Integer.MAX_VALUE);
 		
 		return true;
 	}

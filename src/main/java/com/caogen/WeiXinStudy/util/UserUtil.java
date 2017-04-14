@@ -9,8 +9,11 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.caogen.WeiXinStudy.entity.AccessToken;
 import com.caogen.WeiXinStudy.entity.PublicAccount;
 import com.caogen.WeiXinStudy.entity.User;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * 微信用户管理
@@ -62,23 +65,34 @@ public class UserUtil {
 	
 	/**
 	 * 通过网页授权的access_token获取用户信息
-	 * @param access_token
 	 * @param openid
 	 * @return
 	 * @throws Exception 
 	 */
-	public static User getUserInfo(HttpServletRequest request, String access_token, String openid) throws Exception{
+	public static User getPageUserInfo(String openid) throws Exception{
+		//通过openid获取从缓存获取token等数据
+		Jedis jedis = RedisPool.getJedis();
+		String tokenJson = jedis.get(openid);
+		if(StringUtils.isEmpty(tokenJson)){
+			RedisPool.close(jedis);
+			return null;
+		}
+		
+		AccessToken accessToken = JSON.parseObject(tokenJson, AccessToken.class);
+		
 		//检验授权凭证（access_token）是否有效
-		String checkUrl = "https://api.weixin.qq.com/sns/auth?access_token="+access_token+"&openid="+openid+"";
+		String checkUrl = "https://api.weixin.qq.com/sns/auth?access_token="+accessToken.getAccess_token()+"&openid="+openid+"";
 		String checkMessage = HttpUtil.sendGet(checkUrl);
 		
 		JSONObject json = JSONObject.parseObject(checkMessage);
 		String errcode = json.get("errcode").toString();
 		if(!errcode.equals("0")){
 			//这个时候说明token失效或请求失败
-			String refresh_token = request.getSession().getAttribute("refresh_token")==null?"":
-				request.getSession().getAttribute("refresh_token").toString();
-			if(StringUtils.isEmpty(refresh_token))return null;
+			String refresh_token = accessToken.getRefresh_token();
+			if(StringUtils.isEmpty(refresh_token)){
+				RedisPool.close(jedis);
+				return null;
+			}
 			
 			//通过refresh_token刷新access_token
 			String updateUrl = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="+PublicAccount.getAppid()+"&grant_type=refresh_token&refresh_token="+refresh_token+"";
@@ -86,21 +100,20 @@ public class UserUtil {
 			JSONObject updateJson = JSONObject.parseObject(updateMessage);
 
 			if(updateJson.get("errcode") != null){
+				RedisPool.close(jedis);
 				logger.info("刷新网页access_token返回错误码:" + updateJson.get("errcode").toString());
 				return null;
 			}
 			
-			access_token = updateJson.getString("access_token");
-			refresh_token = updateJson.getString("refresh_token");
-			openid = updateJson.getString("openid");
+			accessToken.setAccess_token(updateJson.getString("access_token"));
+			accessToken.setRefresh_token(updateJson.getString("refresh_token"));
 			
-			request.getSession().setAttribute("access_token", access_token);
-			request.getSession().setAttribute("refresh_token", refresh_token);
-			request.getSession().setAttribute("openid", openid);
+			jedis.set(openid, JSONObject.toJSONString(accessToken));
+			RedisPool.close(jedis);
 		}
 		
 		
-		String url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + access_token + "&openid=" + openid
+		String url = "https://api.weixin.qq.com/sns/userinfo?access_token=" + accessToken.getAccess_token() + "&openid=" + openid
 				+ "&lang=zh_CN";
 		String message = HttpUtil.sendGet(url);
 

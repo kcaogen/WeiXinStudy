@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.caogen.WeiXinStudy.entity.User;
 import com.caogen.WeiXinStudy.service.CoreService;
 import com.caogen.WeiXinStudy.util.AccessTokenUtil;
+import com.caogen.WeiXinStudy.util.CookieUtil;
 import com.caogen.WeiXinStudy.util.MessageUtil;
 import com.caogen.WeiXinStudy.util.SignUtil;
 import com.caogen.WeiXinStudy.util.UserUtil;
@@ -103,9 +104,9 @@ public class WeiXinController {
 	 * @return
 	 */
 	@RequestMapping(value = "/userCode")
-	public String getUserCode(HttpServletRequest request){
+	public String getUserCode(HttpServletRequest request, HttpServletResponse response){
 		try {
-			boolean flag = AccessTokenUtil.getPageAccessToken(request);
+			boolean flag = AccessTokenUtil.getPageAccessToken(request, response);
 			if(flag){
 				return "forward:/weixin/userInfo";
 			}
@@ -125,15 +126,12 @@ public class WeiXinController {
 	@RequestMapping(value = "/userInfo")
 	public String getUserInfo(HttpServletRequest request){
 		try {
-			//先从session获取access_token和openid
-			String access_token = request.getSession().getAttribute("access_token")==null?"":
-				request.getSession().getAttribute("access_token").toString();
-			String openid = request.getSession().getAttribute("openid")==null?"":
-				request.getSession().getAttribute("openid").toString();
+			//先从cookie获取openid
+			String openid = CookieUtil.getCookieValue(request, "openid");
 			
-			if(StringUtils.isEmpty(access_token) || StringUtils.isEmpty(openid))return "userCode";
+			if(StringUtils.isEmpty(openid))return "userCode";
 			
-			User user = UserUtil.getUserInfo(request, access_token, openid);
+			User user = UserUtil.getPageUserInfo(openid);
 			if(user == null)return "userCode";
 			request.setAttribute("user", user);
 			
